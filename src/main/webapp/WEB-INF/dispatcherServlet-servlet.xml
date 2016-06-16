@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:mvc="http://www.springframework.org/schema/cache"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!-- 配置数据源 -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName">
+            <value>com.mysql.jdbc.Driver</value>
+        </property>
+        <property name="url">
+            <value>jdbc:mysql://localhost:3306/phonebook</value>
+        </property>
+        <property name="username">
+            <value>root</value>
+        </property>
+        <property name="password">
+            <value>123456</value>
+        </property>
+    </bean>
+
+    <!-- 配置视图解析器 -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- 视图前缀 -->
+        <property name="prefix">
+            <value>/</value>
+        </property>
+        <!-- 视图后缀 -->
+        <property name="suffix">
+            <value>.jsp</value>
+        </property>
+    </bean>
+
+    <!-- 配置AddrBookDao类 -->
+    <bean id="addrBookDao" class="com.dao.AddrBookDao">
+        <!-- 注入数据源 -->
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <!-- 配置AddrBookController类 -->
+    <bean name="/addrBook.html" class="com.controller.AddrBookController">
+        <!-- 注入addrBookDao -->
+        <property name="addrBookDao" ref="addrBookDao" />
+        <!-- 注入多动作解析器 -->
+        <property name="methodNameResolver">
+            <ref bean="paraMethodResolver" />
+        </property>
+    </bean>
+    <!-- 配置多动作解析器 -->
+    <bean id="paraMethodResolver"
+          class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
+        <property name="paramName" value="method" />
+    </bean>
+</beans>
